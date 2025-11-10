@@ -6,18 +6,18 @@ channels:
 dependencies:
     - python=3.10
     - pip
-    - numpy
+    - numpy==1.26.4
     - scipy
     - matplotlib
     - seaborn
     - jupyter
     - tqdm
-    - pytorch=2.3.0
-    - pytorch-cuda=12.1
+    - pytorch
+    - pytorch-cuda=12.4
     - pip:
         - jax[cuda12]==0.4.28
         - flax==0.8.3
-        - optax==0.2.2
+        - git+https://github.com/deepmind/optax.git
         - transformers==4.41.0
         - torch==2.3.0
         - sentencepiece
@@ -25,6 +25,9 @@ dependencies:
         - mlxu >= 0.1.13
         - einops
         - gcsfs
+        - google-cloud-storage
+        - neural-tangents
+        - wandb==0.17.4
         - requests
         - lm-eval
         - pydantic
