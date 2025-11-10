@@ -1,0 +1,33 @@
+name: EasyLM
+channels:
+    - pytorch
+    - nvidia
+    - conda-forge
+dependencies:
+    - python=3.10
+    - pip
+    - numpy
+    - scipy
+    - matplotlib
+    - seaborn
+    - jupyter
+    - tqdm
+    - pytorch=2.3.0
+    - pytorch-cuda=12.1
+    - pip:
+        - jax[cuda12]==0.4.28
+        - flax==0.8.3
+        - optax==0.2.2
+        - transformers==4.41.0
+        - torch==2.3.0
+        - sentencepiece
+        - datasets
+        - mlxu >= 0.1.13
+        - einops
+        - gcsfs
+        - requests
+        - lm-eval
+        - pydantic
+        - fastapi
+        - uvicorn
+        - gradio
