@@ -1,5 +1,5 @@
 # EasyLM Documentations
-EasyLM is a framework for pre-training, fine-tuning, and evaluating and serving
+[EasyLM](https://github.com/young-geng/EasyLM) is a framework for pre-training, fine-tuning, and evaluating and serving
 large language models in JAX/Flax. EasyLM is designed to be easy to use by
 hiding the complexities of distributed model/data parallelism but exposing the
 core training and inference details of large language models, making it easy to
