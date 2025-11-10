@@ -7,7 +7,8 @@ This repository accompanies the paper **“[The Potential of Second-Order Optimi
 
 We build directly on top of the EasyLM codebase. Files marked with `(*)` were modified from the EasyLM repo, and those with `(+)` were added for this project. 
 ```
-EasyLM/ ├── data.py (*) # Modified to handle option for pretokenized dataset
+EasyLM/
+        ├── data.py (*) # Modified to handle option for pretokenized dataset
         ├── gcs_utils.py (+) # Utilities for Google Cloud Storage
         ├── jax_utils.py (*) # Additional JAX/training utilities 
         ├── layerwise_utils.py (+) # Utilities for layer-wise GN computations
@@ -18,10 +19,10 @@ EasyLM/ ├── data.py (*) # Modified to handle option for pretokenized datas
         │ ├── llama_train_gn_layerwise.py (+) # Layer-wise GN and GN-prox-linear
         ├── optimizers.py (*) # Modified to include additional baselines
         ├── pretokenize.py (+) # Data preprocessing and tokenization
-        ├── templates/
-        │ ├── adam-template.sbatch (+) # SLURM script for baseline optimizers
-        │ ├── gn-template.sbatch (+) # SLURM script for GN and GN-prox-linear runs
-        ├── sweep_launcher.py (+) # Sweep launcher for hyperparameter tuning
+templates/
+        ├── adam-template.sbatch (+) # SLURM script for baseline optimizers
+        ├── gn-template.sbatch (+) # SLURM script for GN and GN-prox-linear runs
+sweep_launcher.py (+) # Sweep launcher for hyperparameter tuning
 
 ```
 
