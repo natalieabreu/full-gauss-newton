@@ -53,8 +53,7 @@ Modify paths, model configuration, and hyperparameters as needed for your enviro
 
 ## Dependencies 
 
-All dependencies are captured in `env.yml`.
-```bash mamba env create -f env.yml mamba activate easylm ```
+All dependencies are captured in `scripts/gpu_environment.yml`.
 
 ---
 
