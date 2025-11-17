@@ -7,8 +7,8 @@
 #SBATCH -e printouts/adam-45m/%A_%a.err
 #SBATCH --open-mode=append
 #SBATCH --array=1
-#SBATCH -p kempner_h100
-#SBATCH --account=kempner_barak_lab
+#SBATCH -p 
+#SBATCH --account=
 #SBATCH --constraint="h100"
 #SBATCH -t 3-00:00:00
 #SBATCH --gres=gpu:1
@@ -34,7 +34,7 @@ mamba activate EasyLM;
 
 python sweep_launcher.py \
     --program='EasyLM.models.llama.llama_train' \
-    --load_checkpoint='trainstate_params::/n/netscratch/kempner_barak_lab/Everyone/opt-soo/45m-checkpoint/streaming_train_state_1000' \
+    --load_checkpoint='trainstate_params::45m-checkpoint/streaming_train_state_1000' \
     --mesh_dim='1,1,1' \
     --dtype='fp32' \
     --total_steps=27694 \
@@ -65,7 +65,7 @@ python sweep_launcher.py \
     --train_dataset.type='huggingface' \
     --train_dataset.text_processor.fields='text' \
     --train_dataset.text_processor.add_bos_token=False \
-    --train_dataset.huggingface_dataset.pretokenized_dataset_dir='/n/netscratch/kempner_barak_lab/Lab/nabreu/SOO-LM/tokenized' \
+    --train_dataset.huggingface_dataset.pretokenized_dataset_dir='${DATA_DIR}/tokenized' \
     --train_dataset.huggingface_dataset.tokens_count_at_start=32768000 \
     --train_dataset.huggingface_dataset.path='allenai/c4' \
     --train_dataset.huggingface_dataset.name='en' \
@@ -74,7 +74,7 @@ python sweep_launcher.py \
     --train_dataset_batch_size=32 \
     --eval_dataset.text_processor.fields='text' \
     --eval_dataset.text_processor.add_bos_token=False \
-    --eval_dataset.huggingface_dataset.pretokenized_dataset_dir='/n/netscratch/kempner_barak_lab/Lab/nabreu/SOO-LM/tokenized-val' \
+    --eval_dataset.huggingface_dataset.pretokenized_dataset_dir='${DATA_DIR}/tokenized-val' \
     --eval_dataset.huggingface_dataset.path='allenai/c4' \
     --eval_dataset.huggingface_dataset.name='en' \
     --eval_dataset.huggingface_dataset.split='validation' \
