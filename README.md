@@ -1,5 +1,5 @@
 # The Potential of Second-Order Optimization for LLMs: A Study with Full Gauss-Newton 
-This repository accompanies the paper **“[The Potential of Second-Order Optimization for LLMs: A Study with Full Gauss-Newton](https://arxiv.org/abs/2510.09378)” (Abreu et al., 2025)**. It builds off of the [EasyLM](https://github.com/young-geng/EasyLM) framework to support full and layer-wise **Gauss–Newton (GN)** preconditioning, as well as a prox-linear variant, to study the performance limits of second-order optimization in transformer-based language models. 
+This repository accompanies the paper **“[The Potential of Second-Order Optimization for LLMs: A Study with Full Gauss-Newton]” (Anon, 2025)**. It builds off of the [EasyLM](https://github.com/young-geng/EasyLM) framework to support full and layer-wise **Gauss–Newton (GN)** preconditioning, as well as a prox-linear variant, to study the performance limits of second-order optimization in transformer-based language models. 
 
 --- 
 
@@ -67,22 +67,6 @@ Experiments are conducted on **45M- and 150M-parameter LLaMA models** trained on
 
 We gratefully acknowledge the creators of the [EasyLM](https://github.com/young-geng/EasyLM) project for developing the original framework on which this work builds.
 
----
-
-## Citation 
-
-If you use this codebase or build upon our work, please cite: 
-
-```
-@misc{abreu2025potentialsecondorderoptimizationllms,
-      title={The Potential of Second-Order Optimization for LLMs: A Study with Full Gauss-Newton}, 
-      author={Natalie Abreu and Nikhil Vyas and Sham Kakade and Depen Morwani},
-      year={2025},
-      eprint={2510.09378},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2510.09378}, 
-}
 ```
 
 ---
