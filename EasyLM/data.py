@@ -368,7 +368,6 @@ class OptHuggingfaceDataset(object):
         
         self._dataset = self.load_dataset(self.config)
 
-        # dataset = Dataset.from_file("/n/home07/nabreu/SOO-LM/EasyLM/scratch/SOO-LM/tokenized/train/data-00000-of-05912.arrow")
         self._seq_length = self.config.seq_length
         self._batch_size = self.config.batch_size
         self._always_start_with_bos = self.config.always_start_with_bos
@@ -523,7 +522,7 @@ class OptHuggingfaceDataset(object):
 #     @staticmethod
 #     def get_default_config(updates=None):
 #         config = mlxu.config_dict()
-#         config.pretokenized_dataset_dir = "/n/netscratch/kempner_barak_lab/Lab/nabreu/SOO-LM/tokenized"  # Directory of pre-tokenized dataset
+#         config.pretokenized_dataset_dir = "SOO-LM/tokenized"  # Directory of pre-tokenized dataset
 #         config.seq_length = 1024
 #         config.batch_size = 8
 #         config.always_start_with_bos = False
@@ -559,7 +558,6 @@ class OptHuggingfaceDataset(object):
 #         if not os.path.isdir(config.pretokenized_dataset_dir):
 #             raise ValueError(f"Pre-tokenized dataset directory {config.pretokenized_dataset_dir} does not exist.")
 #         dataset = load_from_disk(config.pretokenized_dataset_dir)
-#         # dataset = Dataset.from_file("/n/home07/nabreu/SOO-LM/EasyLM/scratch/SOO-LM/tokenized/train/data-00000-of-05912.arrow")
 #         return dataset
 
 #     def __init__(self, config, tokenizer, text_processor):
@@ -575,7 +573,7 @@ class OptHuggingfaceDataset(object):
         
 #         # TODO: move to flags
 #         if self.config.split == 'validation':
-#             self.config.pretokenized_dataset_dir = "/n/netscratch/kempner_barak_lab/Lab/nabreu/SOO-LM/tokenized-val"
+#             self.config.pretokenized_dataset_dir = "SOO-LM/tokenized-val"
 
 #         self._dataset = self.load_dataset(self.config)
 #         self._seq_length = self.config.seq_length
