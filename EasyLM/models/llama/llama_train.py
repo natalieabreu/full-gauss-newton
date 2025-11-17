@@ -77,7 +77,7 @@ FLAGS, FLAGS_DEF = mlxu.define_flags_with_default(
 
     wandb_run_id='',
     wandb_project='',
-    wandb_entity='harvardml',
+    wandb_entity='',
     wandb_dir='SOO-LM/experiment_output/open_llama_7b',
     output_dir='',
     notes='',
