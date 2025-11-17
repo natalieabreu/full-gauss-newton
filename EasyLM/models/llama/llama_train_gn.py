@@ -91,7 +91,7 @@ FLAGS, FLAGS_DEF = mlxu.define_flags_with_default(
 
     wandb_project='',
     wandb_entity='harvardml',
-    wandb_dir='/n/netscratch/kempner_barak_lab/Lab/nabreu/SOO-LM/experiment_output/open_llama_7b',
+    wandb_dir='SOO-LM/experiment_output/open_llama_7b',
     output_dir='',
     notes='',
     logger=mlxu.WandBLogger.get_default_config(),
