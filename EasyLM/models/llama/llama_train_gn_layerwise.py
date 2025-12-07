@@ -717,6 +717,8 @@ def main(argv):
         donate_argnums=(1,),
     )
 
+    parallel_loss_fn = jax.jit(loss_fn)
+
     def save_checkpoint(train_state, ema=None, milestone=False):
         step = int(jax.device_get(train_state.step))
         metadata = dict(
@@ -978,7 +980,7 @@ def main(argv):
                     accumulated_loss = 0.0
                     for batch in pre_fetched_batches:
                         sharded_rng, subrng = jax.random.split(sharded_rng)
-                        loss, _ = loss_fn(updated_params, batch, subrng)
+                        loss, _ = parallel_loss_fn(updated_params, batch, subrng)
                         accumulated_loss += loss
                     
                     average_loss = accumulated_loss / len(pre_fetched_batches)
