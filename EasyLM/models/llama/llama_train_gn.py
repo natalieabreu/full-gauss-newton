@@ -4,6 +4,7 @@ import numbers
 import warnings
 import json
 from functools import partial
+from collections import deque
 
 from google.cloud import storage
 
@@ -138,6 +139,7 @@ FLAGS, FLAGS_DEF = mlxu.define_flags_with_default(
     single_batch_inner=False,
     ls_lambdas='',
     fixed_step_size=0.0,
+    ls_reuse_lag=0,  # 0: fresh data; positive: reuse past solve batches.
     ls_eval_batches=0,  # 0 means: default to inner_loop_iter
     outer_momentum_beta=0.0,
     armijo_linesearch=False,
@@ -491,7 +493,36 @@ def get_tpu_metrics():
     return out
 
 
+def validate_ls_reuse(config):
+    if config.ls_reuse_lag < 0:
+        raise ValueError('ls_reuse_lag must be nonnegative')
+    if config.ls_reuse_lag and not (
+            config.optimizer_type == 'adamw' and config.gauss_newton
+            and config.single_batch_inner and not config.adaptive_inner_loop
+            and config.linesearch and config.ls_eval_batches == 1
+            and config.train_batch_growth_interval == 0
+            and config.train_dataset.type == 'huggingface'
+            and not config.train_dataset.huggingface_dataset.pretokenized_dataset_dir
+            and not config.load_dataset_state and not config.cg_resume_state
+            and config.save_model_freq == 0 and config.save_milestone_freq == 0):
+        raise ValueError('LS reuse requires fresh fixed-batch raw-HF single-batch '
+                         'GN-Adam, nonadaptive solve, one LS batch and no checkpoints')
+
+
+def reused_ls_batch(history, current):
+    """Select before eviction: current at t=0, previous until full, then lagged.
+
+    Store independent NumPy arrays on the host, never donated device buffers.
+    The selected batch is always evaluated afresh at the current parameters.
+    """
+    age = history.maxlen if len(history) == history.maxlen else int(bool(history))
+    selected = history[0] if age == history.maxlen else history[-1] if age else current
+    history.append({key: np.array(value, copy=True) for key, value in current.items()})
+    return selected, age
+
+
 def main(argv):
+    validate_ls_reuse(FLAGS)
     if FLAGS.n_micro < 0 or FLAGS.cg_n_micro <= 0:
         raise ValueError('n_micro must be nonnegative; cg_n_micro must be positive')
     FLAGS.n_micro = FLAGS.n_micro or FLAGS.cg_n_micro
@@ -1891,6 +1922,8 @@ def main(argv):
         inner_state = create_trainstate_from_params(train_state.params)
         dataset_object = dataset
         dataset = iter(dataset_object)
+        ls_history = deque(maxlen=FLAGS.ls_reuse_lag or 1)
+        ls_reused_tokens = 0
         actual_solve_batch_size = None
         solve_batch_size = FLAGS.train_dataset_batch_size
 
@@ -2139,15 +2172,23 @@ def main(argv):
             def pull_ls_batches_and_baseline(sharded_rng, base_params, dataset):
                 exit_flag = False
                 num_ls_batches = FLAGS.ls_eval_batches if FLAGS.ls_eval_batches > 0 else FLAGS.inner_loop_iter
+                nonlocal ls_reused_tokens
                 ls_batches = []
-                for _ in range(num_ls_batches):
-                    try:
-                        batch, metadata = pull_training_batch('linesearch')
-                        ls_batches.append(batch)
-                    except StopIteration:
-                        print("Dataset exhausted")
-                        exit_flag = True
-                        break
+                if FLAGS.ls_reuse_lag:
+                    batch, age = reused_ls_batch(ls_history, single_batch_)
+                    ls_batches.append(batch)
+                    ls_reused_tokens += int(batch['input_tokens'].size)
+                    defer_wandb({'ls_batch_age': age, 'ls_batch_step': step - age,
+                                'phase_linesearch_reused_tokens': ls_reused_tokens})
+                else:
+                    for _ in range(num_ls_batches):
+                        try:
+                            batch, metadata = pull_training_batch('linesearch')
+                            ls_batches.append(batch)
+                        except StopIteration:
+                            print("Dataset exhausted")
+                            exit_flag = True
+                            break
                 if exit_flag:
                     return None, None, sharded_rng, None, True
                 ls_rngs = []
