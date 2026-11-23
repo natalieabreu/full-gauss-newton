@@ -16,7 +16,8 @@ from tpu_worker import encode, fingerprint
 
 # All site defaults and optional environment overrides live here.
 DEFAULTS = dict(
-    targets={'1': 'gn-v4-32', '2': 'gn-v4-32-2'},
+    targets={'1': 'gn-v4-32', '2': 'gn-v4-32-2',
+             '3': 'gn-v4-32-spot-1', '4': 'gn-v4-32-spot-2'},
     project=os.environ.get('GFN_PROJECT', 'fast-second-order'),
     zone=os.environ.get('GFN_ZONE', 'us-central2-b'),
     user=os.environ.get('GFN_SSH_USER', 'ga2740'),
@@ -33,7 +34,8 @@ HELP = '''Usage (from root: bash scripts/tpu.sh; from scripts/: bash tpu.sh):
   tpu.sh TARGET switch BRANCH       Fetch/switch/fast-forward on all workers
   tpu.sh TARGET ssh [WORKER]        Interactive shell; default worker 0
   tpu.sh help
-TARGET: 1 = gn-v4-32; 2 = gn-v4-32-2
+TARGET: 1 = gn-v4-32; 2 = gn-v4-32-2;
+        3 = gn-v4-32-spot-1; 4 = gn-v4-32-spot-2
 Presets (editable starter settings): ''' + ', '.join(choices()) + '''
 gn_sgd selects the inner GN solver. adam selects ordinary AdamW training.
 See docs/tpu_workflow.md for sync, checkpoint and replay restrictions.
