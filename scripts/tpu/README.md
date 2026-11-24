@@ -57,6 +57,15 @@ echo $! > "$HOME/.local/state/gfn-spot/watchdog.pid"
 tail -f "$HOME/.local/state/gfn-spot/watchdog.log"
 ```
 
+Watchdog state, action and fatal-error messages include a New York timestamp
+(EST in winter, EDT during daylight saving time), for example
+`[2026-11-23 18:05:17 EST] gn-v4-32-spot-1: WAITING_FOR_RESOURCES`.
+Timestamps are recorded when messages are emitted, so they remain accurate when
+viewing historical logs. Update any installed copy of `spot_queue.py` and restart
+that watchdog to load this change; `git pull` alone does not update installed
+copies or running processes. Use `>>` instead of `>` above to retain earlier logs
+when restarting. Existing log entries cannot be timestamped retroactively.
+
 Preview reads cloud inventory but performs no mutation. Watch polls every 300s,
 preserves pending/active/unknown states, and only deletes owned FAILED/SUSPENDED
 requests when no node exists. Delete never uses --force. A later poll recreates an

@@ -1,18 +1,27 @@
 #!/usr/bin/env python3
 """Capacity watchdog for the two additional v4 Spot targets; never runs training."""
 import argparse
+from datetime import datetime
 import fcntl
 import json
 import os
 from pathlib import Path
 import shlex
 import subprocess
+import sys
 import time
+from zoneinfo import ZoneInfo
 
 PROJECT = 'fast-second-order'
 ZONE = 'us-central2-b'
 TARGETS = {'3': 'gn-v4-32-spot-1', '4': 'gn-v4-32-spot-2'}
 OWNER = 'gfn-spot-queue'
+
+
+def log(message, *, file=None):
+    for line in str(message).splitlines() or ['']:
+        timestamp = datetime.now(ZoneInfo('America/New_York')).strftime('%Y-%m-%d %H:%M:%S %Z')
+        print(f'[{timestamp}] {line}', file=file, flush=True)
 
 
 def gcloud(group, action, *args):
@@ -71,7 +80,7 @@ def reconcile(target, requests, nodes, args):
     else:
         validate_owned(resource, name)
         state = resource.get('state', {}).get('state', 'UNKNOWN')
-        print(name + ': ' + state, flush=True)
+        log(name + ': ' + state)
         if state not in {'SUSPENDED', 'FAILED'}:
             # Includes pending/active/deleting and unknown future states. Never reset a wait.
             return
@@ -79,7 +88,7 @@ def reconcile(target, requests, nodes, args):
             raise ValueError(name + ': terminal request still has a node; refusing deletion')
         # No --force: server must also confirm that there are no nodes to delete.
         command = gcloud('queued-resources', 'delete', name, '--async')
-    print(('APPLY ' if args.apply else 'PREVIEW ') + shlex.join(command), flush=True)
+    log(('APPLY ' if args.apply else 'PREVIEW ') + shlex.join(command))
     if args.apply:
         call(command)
     # Recreation follows only after a later successful inventory confirms absence.
@@ -123,4 +132,5 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
-        raise SystemExit('Watchdog stopped; no further actions: ' + str(error))
+        log('Watchdog stopped; no further actions: ' + str(error), file=sys.stderr)
+        raise SystemExit(1)
